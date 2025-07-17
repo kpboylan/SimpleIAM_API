@@ -59,4 +59,16 @@ This is a minimal Identity and Access Management API for assigning users to clin
 | GET    | `/api/users/{email}`        | _None_                            | Get a single user and their groups |
 | GET    | `/api/users`                | _None_                            | Get all users and their groups     |
 
+## 👥 Available User Groups
+
+| ID | Group Name           |
+|----|----------------------|
+| 1  | Investigator         |
+| 2  | Subinvestigator      |
+| 3  | Biostatistician      |
+| 4  | Quality Assurance    |
+| 5  | Sponsor              |
+| 6  | Safety Officer       |
+| 7  | Site Admin           |
+| 8  | Study Monitor        |
 

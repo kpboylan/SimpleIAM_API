@@ -49,11 +49,14 @@ This is a minimal Identity and Access Management API for assigning users to clin
     4. Use this URL to test with Swagger:
         https://simple-iam-api-staging-gpaxa6e9awddc0ac.westeurope-01.azurewebsites.net/swagger/index.html
 
-6. **Example Endpoints**
-    Method	Route	                Description
-    POST	/api/users/register	    Register a new user
-    POST	/api/users/authenticate	Authenticate user credentials
-    POST	/api/users/assign-group	Assign a group by ID to a user
-    GET	    /api/users/{email}	    Get a single user and their groups
-    GET	    /api/users	            Get all users and their groups
+## 📬 Example Endpoints
+
+| Method | Route                       | Request Body                      | Description                        |
+|--------|-----------------------------|-----------------------------------|------------------------------------|
+| POST   | `/api/users/register`       | `{ "email": "", "password": "" }`| Register a new user                |
+| POST   | `/api/users/authenticate`   | `{ "email": "", "password": "" }`| Authenticate user credentials      |
+| POST   | `/api/users/assign-group`   | `{ "email": "", "groupId": 1 }`  | Assign a group to a user by ID     |
+| GET    | `/api/users/{email}`        | _None_                            | Get a single user and their groups |
+| GET    | `/api/users`                | _None_                            | Get all users and their groups     |
+
 

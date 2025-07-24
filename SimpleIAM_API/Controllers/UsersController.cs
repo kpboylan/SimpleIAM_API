@@ -30,6 +30,21 @@ namespace SimpleIAM_API.Controllers
             }
         }
 
+        [HttpPost("registerWithGroup")]
+        public async Task<IActionResult> RegisterWithGroup([FromBody] RegisterUserDto dto)
+        {
+            try
+            {
+                var user = await _userService.RegisterWithGroupAsync(dto.Email, dto.Password, dto.GroupName);
+
+                return Ok(user);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateUserDto dto)
         {
@@ -96,12 +111,24 @@ namespace SimpleIAM_API.Controllers
             {
                 var result = await _userService.GetAllAsync();
 
-                //var result = users.Select(u => new
-                //{
-                //    u.Id,
-                //    u.Email,
-                //    Groups = u.Groups
-                //});
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("Groups")]
+        public async Task<IActionResult> GetGroups()
+        {
+            try
+            {
+                var result = await _userService.GetAllGroupsAsync();
 
                 return Ok(result);
             }
@@ -114,5 +141,7 @@ namespace SimpleIAM_API.Controllers
                 return Conflict(ex.Message);
             }
         }
+
+
     }
 }

@@ -5,18 +5,21 @@ using SimpleIAM_API.DTO;
 using Microsoft.EntityFrameworkCore;
 using SimpleIAM_API.DBPersistence;
 using SimpleIAM_API.Helper;
+using SimpleIAM_API.UnitOfWork;
 
 namespace SimpleIAM_API.Service
 {
     public class UserService : IUserService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _repo;
         private readonly ClinicalTrialDbContext _context;
 
-        public UserService(IUserRepository repo, ClinicalTrialDbContext context)
+        public UserService(IUserRepository repo, ClinicalTrialDbContext context, IUnitOfWork unitOfWork)
         {
             _repo = repo;
             _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<UserDto> RegisterAsync(string email, string password)
@@ -35,13 +38,40 @@ namespace SimpleIAM_API.Service
             var user = new User { Email = email, Password = password };
             await _repo.AddAsync(user);
             await _repo.SaveChangesAsync();
-            //return user;
 
             return new UserDto
             {
                 Id = user.Id,
                 Email = user.Email, // or user.Username depending on your model
                 Groups = new List<string>() // default empty list for new users
+            };
+        }
+
+        public async Task<UserDto> RegisterWithGroupAsync(string email, string password, string groupName)
+        {
+            var (isValid, errors) = UserRegistration.ValidateCredentials(email, password);
+
+            if (!isValid)
+            {
+                throw new ArgumentException(string.Join(" ", errors));
+            }
+
+            var existing = await _repo.GetByEmailAsync(email);
+            if (existing != null)
+                throw new InvalidOperationException("User already exists");
+
+            var group = new Group { Name = groupName };
+            var user = new User { Email = email, Password = password };
+
+            await _unitOfWork.Users.AddAsync(user);
+            await _unitOfWork.Groups.AddAsync(group);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Email = user.Email, // or user.Username depending on your model
+                GroupName = groupName // default empty list for new users
             };
         }
 
@@ -102,6 +132,11 @@ namespace SimpleIAM_API.Service
                 Email = u.Email,
                 Groups = u.Groups.Select(g => g.Group.Name).ToList()
             }).ToList();
+        }
+
+        public async Task<List<Group>> GetAllGroupsAsync()
+        {
+            return await _repo.GetAllGroupsAsync();
         }
     }
 }

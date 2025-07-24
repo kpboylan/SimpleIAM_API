@@ -29,6 +29,12 @@ namespace SimpleIAM_API.Repository
                 .ToListAsync();
         }
 
+        public async Task<List<Group>> GetAllGroupsAsync()
+        {
+            return await _context.Groups
+                .ToListAsync();
+        }
+
         public async Task AddAsync(User user)
         {
             await _context.Users.AddAsync(user);

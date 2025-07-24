@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SimpleIAM_API.Adapter;
 using SimpleIAM_API.DBPersistence;
 using SimpleIAM_API.Entity;
 using SimpleIAM_API.Repository;
@@ -17,7 +18,9 @@ builder.Services.AddDbContext<ClinicalTrialDbContext>(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserService, UserServiceAdapter>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<LegacyUserService>();
 builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();

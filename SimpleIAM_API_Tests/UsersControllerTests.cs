@@ -43,7 +43,7 @@ namespace SimpleIAM_API_Tests
             var result = await _controller.Register(dto);
 
             // Assert
-            var okResult = Assert.IsType<CreatedAtActionResult>(result);
+            var okResult = Assert.IsType<CreatedResult>(result);
             var actualUser = Assert.IsType<UserDto>(okResult.Value);
             Assert.Equal(expectedUser.Email, actualUser.Email);
         }

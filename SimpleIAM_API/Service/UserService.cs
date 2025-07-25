@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using SimpleIAM_API.DBPersistence;
 using SimpleIAM_API.Helper;
 using SimpleIAM_API.UnitOfWork;
+using SimpleIAM_API.Factory;
+using static SimpleIAM_API.Factory.Enum.FactoryEnum;
 
 namespace SimpleIAM_API.Service
 {
@@ -39,12 +41,20 @@ namespace SimpleIAM_API.Service
             await _repo.AddAsync(user);
             await _repo.SaveChangesAsync();
 
+            SendNotification(email);
+
             return new UserDto
             {
                 Id = user.Id,
                 Email = user.Email, // or user.Username depending on your model
                 Groups = new List<string>() // default empty list for new users
             };
+        }
+
+        private void SendNotification(string email)
+        {
+            var emailNotification = NotificationFactory.CreateNotification(NotificationType.Email);
+            emailNotification.Send(email, "This is an email message.");
         }
 
         public async Task<UserDto> RegisterWithGroupAsync(string email, string password, string groupName)

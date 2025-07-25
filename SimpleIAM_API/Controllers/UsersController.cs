@@ -22,7 +22,7 @@ namespace SimpleIAM_API.Controllers
             {
                 var user = await _userService.RegisterAsync(dto.Email, dto.Password);
 
-                return CreatedAtAction(nameof(GetUser), new { username = user.Email }, user);
+                return Created("/api/users/" + user.Email, user);
             }
             catch (ArgumentException ex)
             {

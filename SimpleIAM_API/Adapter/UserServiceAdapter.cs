@@ -2,10 +2,12 @@
 using SimpleIAM_API.DBPersistence;
 using SimpleIAM_API.DTO;
 using SimpleIAM_API.Entity;
+using SimpleIAM_API.Factory;
 using SimpleIAM_API.Helper;
 using SimpleIAM_API.Repository;
 using SimpleIAM_API.Service;
 using SimpleIAM_API.UnitOfWork;
+using static SimpleIAM_API.Factory.Enum.FactoryEnum;
 
 namespace SimpleIAM_API.Adapter
 {
@@ -30,10 +32,18 @@ namespace SimpleIAM_API.Adapter
 
             var user = new User { Email = email };
 
+            SendNotification(email);
+
             return new UserDto
             {
                 Email = user.Email
             };
+        }
+
+        private void SendNotification(string email)
+        {
+            var emailNotification = NotificationFactory.CreateNotification(NotificationType.Email);
+            emailNotification.Send(email, "This is an email message.");
         }
 
         public async Task<UserDto> RegisterWithGroupAsync(string email, string password, string groupName)
